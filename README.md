@@ -1,2 +1,2 @@
 # tidy-tuesday
-collection of [rfordatascience/tidytuesday](https://github.com/rfordatascience/tidytuesday) projects
+collection of my [rfordatascience/tidytuesday](https://github.com/rfordatascience/tidytuesday) projects
