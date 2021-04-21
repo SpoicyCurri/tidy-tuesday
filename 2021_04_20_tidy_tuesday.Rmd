@@ -63,7 +63,8 @@ Explore the data and process it into a nice format for plotting! Access each dat
 ```{r Wrangle}
 
 netflix_titles <- tt$netflix_titles %>%
-  tibble()
+  tibble() %>%
+  sepearte
 
 netflix_titles %>% 
   mutate("year_added" = year(as_date(date_added, format = "%B %d,%Y")),
@@ -74,6 +75,41 @@ netflix_titles %>%
             mean_duration = mean(duration_number)) %>%
   ggplot(aes(year_added, mean_duration, colour = type)) +
   geom_line()
+
+```
+
+
+```{r copying DGR}
+
+netflix_titles <- tt$netflix_titles %>%
+  tibble() %>%
+  separate(duration, c("duration", "duration_units"), sep = " ", convert = TRUE) %>%
+  mutate(date_added = mdy(date_added),
+         year_added = year(date_added),
+         mature = rating %in% c("TV-MA", "R", "NC-17")) #returns a True or False
+
+library(tidytext)
+library(snakecase)
+library(tidylo)
+
+words_unnested <-  %>%
+  anti_join(stop_words, by = "word")
+  
+netflix_titles %>%
+  select(type, title, "genre" = listed_in, cast, year_added) %>%
+  filter(type == "Movie") %>%
+  separate_rows(cast, sep = ", ") %>%
+  filter(!str_detect(genre, "International Movies")) %>%
+  drop_na(cast) %>%
+  count(year_added, cast, sort = T) %>%
+  group_by(year_added) %>%
+  filter(n > 3) %>%
+  slice_head(n = 10) %>%
+  arrange(year_added, desc(n)) %>% View()
+  ggplot(aes(n, cast)) +
+  geom_col() +
+  facet_wrap(~year_added)
+  
 
 ```
 
