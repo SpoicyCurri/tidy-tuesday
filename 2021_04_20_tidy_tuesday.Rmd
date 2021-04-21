@@ -17,6 +17,7 @@ As such we encourage everyone of all skills to participate!
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
+library(lubridate)
 library(tidytuesdayR)
 
 ```
@@ -61,7 +62,18 @@ Explore the data and process it into a nice format for plotting! Access each dat
 
 ```{r Wrangle}
 
+netflix_titles <- tt$netflix_titles %>%
+  tibble()
 
+netflix_titles %>% 
+  mutate("year_added" = year(as_date(date_added, format = "%B %d,%Y")),
+         "duration_number" = as.numeric(str_extract(duration, "[:digit:]*")),
+         "duration_units" = str_extract(duration, "[:alpha:]*")) %>%
+  group_by(year_added, type) %>%
+  summarise(n_titles = n(),
+            mean_duration = mean(duration_number)) %>%
+  ggplot(aes(year_added, mean_duration, colour = type)) +
+  geom_line()
 
 ```
 
